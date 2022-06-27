@@ -1,6 +1,6 @@
 # Hack your Kubernetes controller in Bash in 10 minutes!
 
-| [✨ Follow the presentation using the "live" slides][live] | [🎓️ Normal slides][slides] |
+| [✨ Follow the presentation using the "live" slides][live] | [🎓️ Standard slides][slides] |
 | ------------------- | ---------------- |
 
 [live]: https://slides.com/d/jZelwBg/live "Live slides only available on 30 June 2022 for the presentation 'Hack your Kubernetes controller in Bash in 10 minutes!'"
