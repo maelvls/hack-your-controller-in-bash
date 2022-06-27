@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: controller
+spec:
+  replicas: 1
+  selector:
+    matchLabels: { name: controller }
+  template:
+    metadata:
+      labels: { name: controller }
+    spec:
+      containers:
+        - name: controller
+          image: controller:local
+          imagePullPolicy: Never
+          env:
+            - name: VAULT_ADDR
+              value: http://vault.vault:8200
+            - name: VAULT_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: vault-token
+                  key: vault-token
+      serviceAccountName: controller
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: controller
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: controller
+subjects:
+  - kind: ServiceAccount
+    name: controller
+roleRef:
+  name: external-secrets-reader
+  kind: Role
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: external-secrets-reader
+rules:
+  - apiGroups: [external-secrets.io]
+    resources: [externalsecrets]
+    verbs: [get, list, watch, update, patch]

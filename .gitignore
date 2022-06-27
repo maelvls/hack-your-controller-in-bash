@@ -1,0 +1,4 @@
+*.tar
+.vscode
+mine/
+kubectl-patch-status
