@@ -1,7 +1,7 @@
 # Hack your Kubernetes controller in Bash in 10 minutes!
 
 | [✨ Follow the presentation using the "live" slides][live] | [🎓️ Standard slides][slides] |
-| ------------------- | ---------------- |
+| ---------------------------------------------------------- | ----------------------------- |
 
 [live]: https://slides.com/d/jZelwBg/live "Live slides only available on 30 June 2022 for the presentation 'Hack your Kubernetes controller in Bash in 10 minutes!'"
 [slides]: https://slides.com/maelvls/hack-your-kubernetes-controller-in-10-minutes "Slides of the presentation 'Hack your Kubernetes controller in Bash in 10 minutes!'"
@@ -31,6 +31,7 @@ To try this controller, you will need to install the following tools:
 
 - `docker` which you can get with [`colima`](https://github.com/abiosoft/colima)
   on M1 and Intel Macs (instead of Docker Desktop for Mac).
+- [`kubectl`](https://kubernetes.io/docs/tasks/tools/install-kubectl/) 1.24 or above (required for `--subresource`),
 - [`k3d`](https://k3d.io/v5.4.3/#installation).
 
 Then, run the following command. The command creates a K3s cluster
@@ -67,7 +68,7 @@ Looking at the first shell session (the one with `kubectl get externalsecret --w
 you will see the `postgres` external secret going from `SecretSyncedError` to
 `SecretSynced`:
 
-```
+```text
 NAME       KEY                     PROPERTY   READY   REASON             MESSAGE
 postgres   secret/dev-1/postgres   password   False   SecretSyncedError  could not get secret data from provider
 postgres   secret/dev-1/postgres   password   True    SecretSynced       Secret was synced
@@ -92,7 +93,7 @@ version            1
 ```
 
 (Optional) You can now run the controller in a Pod. Run the following
-two commands to build the container and 
+two commands to build the container and
 
 ```sh
 docker buildx build . -t controller:local -o type=docker,dest=img.tar && k3d images import img.tar
@@ -131,7 +132,7 @@ In the first shell session where `kubectl get externalsecret --watch` is running
 you will see the external secret from `SecretSynced` to `SecretSyncedError`
 and back to `SecretSyncedError`:
 
-```
+```text
 NAME       KEY                     PROPERTY   READY   REASON             MESSAGE
 postgres   secret/dev-1/postgres   password   False   SecretSyncedError  could not get secret data from provider
 postgres   secret/dev-1/postgres   password   True    SecretSynced       Secret was synced
