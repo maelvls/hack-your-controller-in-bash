@@ -127,7 +127,19 @@ To see if the controller is working, you can run the following command:
 vault kv metadata delete secret/dev-1/postgres
 ```
 
-The logs of the controller should show that the secret was re-generated.
+In the first shell session where `kubectl get externalsecret --watch` is running,
+you will see the external secret from `SecretSynced` to `SecretSyncedError`
+and back to `SecretSyncedError`:
+
+```
+NAME       KEY                     PROPERTY   READY   REASON             MESSAGE
+postgres   secret/dev-1/postgres   password   False   SecretSyncedError  could not get secret data from provider
+postgres   secret/dev-1/postgres   password   True    SecretSynced       Secret was synced
+postgres   secret/dev-1/postgres   password   True    SecretSynced       Secret was synced
+postgres   secret/dev-1/postgres   password   True    SecretSynced       Secret was synced
+postgres   secret/dev-1/postgres   password   False   SecretSyncedError  could not get secret data from provider
+postgres   secret/dev-1/postgres   password   True    SecretSynced       Secret was synced
+```
 
 ## Go further: try the advanced Bash controller (`controller-with-conditions.sh`)
 
