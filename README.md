@@ -13,12 +13,10 @@ the presentation.
 
 ## Try the one-liner controller for yourself (`controller.sh`)
 
-In the presentation, we presented a simple "one-liner" controller that
-relies on `kubectl` and `jq`. The one-liner looks like this:
+During the presentation, we show a controller that takes for form of a
+"one-liner" that you can copy-paste in your terminal.
 
 ```sh
-#! /bin/bash
-
 kubectl get externalsecret --watch -ojson \
   | jq 'select(.status.conditions[]?.reason == "SecretSyncedError")' --unbuffered \
   | jq '.spec.data[0].remoteRef | "\(.key) \(.property)"' -r --unbuffered \
@@ -27,26 +25,23 @@ kubectl get externalsecret --watch -ojson \
   done
 ```
 
-In this repository, you will find the file `controller.sh`. It contains
-this one-liner.
+The file `controller.sh` contains the above command.
 
-To try this one-liner controller, you will need the following
-prerequisites:
+To try this controller, you will need to install the following tools:
 
-- [`k3d`](https://k3d.io/v5.4.3/#installation)
-- [`telepresence`](https://www.telepresence.io/docs/latest/install/)
+- `docker` which you can get with [`colima`](https://github.com/abiosoft/colima)
+  on M1 and Intel Macs (instead of Docker Desktop for Mac).
+- [`k3d`](https://k3d.io/v5.4.3/#installation).
 
-Now, let us set up everything needed to run the one-liner controller.
+Then, run the following command. The command creates a K3s cluster
+and installs Vault and external-secrets, as well as an ExternalSecret
+object called `postgres` for demonstration purposes:
 
 ```sh
 ./setup.sh
 ```
 
-> This command spawns a K3s Kubernetes cluster, installs Vault and
-> external-secrets, and creates an ExternalSecret object so that you can see
-> the controller's behavior.
-
-Optional: you can watch the external secrets to follow the changes along:
+Run the following long-running command (this is an optional step):
 
 ```console
 $ kubectl get externalsecret --watch
@@ -55,19 +50,31 @@ postgres   secret/dev-1/postgres   password   True    SecretSynced   Secret was 
 postgres   secret/dev-1/postgres   password   True    SecretSynced   Secret was synced
 ```
 
-Then, create a tunnel to Vault:
+Open a second shell session to create a tunnel to Vault with
+the following command:
 
 ```console
 kubectl port-forward -n vault vault-0 8200
 ```
 
-In a different Shell session, run the controller:
+In a third shell session, run the controller with the command:
 
 ```sh
 ./controller.sh
 ```
 
-The output of `controller.sh` shows when a `vault put` command is executed:
+Looking at the first shell session (the one with `kubectl get externalsecret --watch`)
+you will see the `postgres` external secret going from `SecretSyncedError` to
+`SecretSynced`:
+
+```
+NAME       KEY                     PROPERTY   READY   REASON             MESSAGE
+postgres   secret/dev-1/postgres   password   False   SecretSyncedError  could not get secret data from provider
+postgres   secret/dev-1/postgres   password   True    SecretSynced       Secret was synced
+```
+
+The controller's output isn't great. It just shows what `vault put` shows
+when an external secret is processed.
 
 ```console
 $ ./controller.sh
@@ -84,12 +91,18 @@ destroyed          false
 version            1
 ```
 
-The last step is to run the same thing in a Pod:
+(Optional) You can now run the controller in a Pod. Run the following
+two commands to build the container and 
 
 ```sh
 docker buildx build . -t controller:local -o type=docker,dest=img.tar && k3d images import img.tar
 kubectl apply -f ./deploy.yaml
 ```
+
+> **⁉️ `docker build` vs. `docker buildx build`**: In the above command, we use the
+> `buildx` subcommand, also called BuildKit. Unlike the traditional `docker build`
+> command, with BuildKit, it is possible to save the Docker-compatible image tarball
+> directly to disk using `-o type=docker,dest=img.tar`.
 
 Check that the controller is running:
 
