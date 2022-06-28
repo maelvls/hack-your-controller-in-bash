@@ -61,6 +61,7 @@ kubectl port-forward -n vault vault-0 8200
 In a third shell session, run the controller with the command:
 
 ```sh
+export VAULT_ADDR=http://localhost:8200 VAULT_TOKEN=root
 ./controller.sh
 ```
 
@@ -151,18 +152,29 @@ On top of poor logs, `controller.sh` does not inform Kubernetes users why a
 particular ExternalSecret object does not seem to be picked up by the
 controller. Nothing shows in the status, and nothing shows in events.
 
-To correct that, you can try `controller-with-conditions.sh`. This
-controller is a bit more complex due to a limitation in `kubectl`
-preventing us to update the status of an ExternalSecret object.
+The file `controller-with-conditions.sh` is similar to `controller.sh`, except
+for three aspects:
+
+1. The user is now alerted of problems with the condition `Created`.
+2. The user now has to set the annotation `create: true` to enable the
+   auto-generation of the secret in Vault.
+3. The logs are now well structured.
+
+In a first shell session, turn on port-forwarding to Vault with the command:
+
+```console
+kubectl port-forward -n vault vault-0 8200
+```
+
+In a second shell session, run the controller with the command:
 
 ```sh
+export VAULT_ADDR=http://localhost:8200 VAULT_TOKEN=root
 ./controller-with-conditions.sh
 ```
 
-This controller is a bit more elaborated; it waits until an ExternalSecret
-has the annotation `create: true` before creating a random secret in Vault.
-Thus, the next step is to tell the controller to create the secret with our
-existing `postgres` ExternalSecret.
+You can now "enable" the behavior on the external secret `postgres` with the
+following command:
 
 ```sh
 kubectl annotate externalsecret postgres create=true

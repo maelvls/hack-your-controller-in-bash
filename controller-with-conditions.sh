@@ -9,14 +9,6 @@ set -buo pipefail
 
 DEBUG="${DEBUG:-}"
 
-# Since this script may be run from one's terminal instead of inside a Pod,
-# let us port-forward to Vault. The reason shellcheck SC2064 is disabled is
-# because $! is immediately expanded so that we know which process to kill
-# in the trap.
-# kubectl port-forward -n vault vault-0 8200 >/dev/null &
-# shellcheck disable=SC2064
-# trap "trap - SIGTERM && kill $! 2>/dev/null" SIGINT SIGTERM EXIT
-
 # Since 1.24, it is now possible to update resource statuses. This function
 # makes it easy to set a condition on a given externalsecret (e.g.,
 # Ready=True).
@@ -55,7 +47,6 @@ kubectl get externalsecret --all-namespaces -ojson --watch | jq -c --unbuffered 
 
     HasAnnot=null,*)
         [ -z "$DEBUG" ] || printf "%s: the ExternalSecret does not have the 'create' annotation, skipping.\n" "$name"
-        continue
         ;;
 
     HasAnnot=true,Ready=False,Reason=SecretSyncedError,Created=False)
@@ -67,6 +58,7 @@ kubectl get externalsecret --all-namespaces -ojson --watch | jq -c --unbuffered 
         if ! out=$(vault kv put "$vault_path" "$vault_key"="$(openssl rand -hex 32)" 2>&1); then
             printf "%s: vault secret write failed: %s\n" "$name" "$out"
             kubectl-condition "$name" Created False ErrorCreating "While putting the random value: $out"
+            continue
         fi
 
         printf "%s: the Vault secret was created.\n" "$name"
@@ -83,22 +75,19 @@ kubectl get externalsecret --all-namespaces -ojson --watch | jq -c --unbuffered 
     HasAnnot=*,Ready=False,Reason=SecretSyncedError,Created=*)
         printf "%s: the only valid value for the annotation 'create' is 'true'. Skipping.\n" "$name"
         kubectl-condition "$name" Created False ErrorAnnotation "The only accepted value for the annotation 'create' is 'true'."
-        continue
         ;;
 
     # If we previously tried to create the Vault secret, but in the
     # meantime the external-secrets operator managed to find the secret,
     # let's make sure that we set Created=True just to avoid confusion.
     HasAnnot=*,Ready=True,Reason=*,Created=False)
-        printf "%s: turning Created=False to Created=True since the external-secrets operator found the secret in Vault.\n" "$name"
+        printf "%s: turning condition 'Created' from False to True since the external-secrets operator found the secret in Vault.\n" "$name"
         kubectl-condition "$name" Created True Exists "The external-secrets operator has found the secret."
-        continue
         ;;
 
     # When the ExternalSecret isn't marked as SecretSyncedError, we do nothing.
     *,Ready=*,Reason=*,Created=*)
         [ -z "$DEBUG" ] || printf "%s: doing nothing.\n" "$name"
-        continue
         ;;
     esac
 done
