@@ -1,5 +1,7 @@
 #! /bin/bash
 
+set -uexo pipefail
+
 k3d cluster list | grep -q k3s-default || k3d cluster create
 
 helm repo add --force-update hashicorp https://helm.releases.hashicorp.com
@@ -14,6 +16,10 @@ helm upgrade --install external-secrets \
   external-secrets/external-secrets \
   -n external-secrets --create-namespace \
   --set installCRDs=true
+
+# The external-secrets webhook pod takes some time to get started. This
+# command waits until the webhook responds.
+timeout 5m bash -c "until kubectl apply --dry-run=server -f- <<<$'apiVersion: external-secrets.io/v1beta1\nkind: SecretStore\nmetadata:\n  name: test\nspec:\n  provider: {fake: {data: []}}'; do sleep 1; done"
 
 # When running "kubectl get externalsecret", the columns are not very
 # informative. This command modifies the displayed columns so that we can see
