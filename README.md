@@ -8,7 +8,7 @@
 
 On 30 June 2022, Antoine Le Squéren and Maël Valais presented "Hack your
 Kubernetes controller in Bash in 10 minutes!" at Kubernetetes Community
-Days Berlin. This README details how to reproduce what was presented during
+Days Berlin. This page details how to reproduce what was presented during
 the presentation.
 
 ## Try the one-liner controller for yourself (`controller.sh`)
