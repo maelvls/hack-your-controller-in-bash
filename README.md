@@ -185,6 +185,8 @@ The logs should look like this:
 ```console
 $ ./controller-with-conditions.sh
 info: started watching ExternalSecrets.
+postgres: the ExternalSecret is Ready=False, let us create a random password and put it in Vault.
+postgres: the Vault secret was created.
 postgres: inconsistency: Created is True but SecretSyncedError is False. Attempting to recreate the secret in Vault to fix this issue.
 postgres: the ExternalSecret is Ready=False, let us create a random password and put it in Vault.
 postgres: the Vault secret was created.
