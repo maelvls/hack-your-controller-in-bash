@@ -13,7 +13,7 @@ the presentation.
 
 ## Try the one-liner controller for yourself (`controller.sh`)
 
-During the presentation, we show a controller that takes for form of a
+In the presentation, we show a controller that takes for form of a
 "one-liner" that you can copy-paste in your terminal.
 
 ```sh
