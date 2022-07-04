@@ -1,9 +1,11 @@
 # Hack your Kubernetes controller in Bash in 10 minutes!
 
-| [🎓️ Slides][slides] |
+| [🎓️ Slides][slides] ([backup][backup]) |
 | ----------------------------- |
 
-[slides]: https://slides.com/maelvls/hack-your-kubernetes-controller-in-10-minutes "Slides of the presentation 'Hack your Kubernetes controller in Bash in 10 minutes!'"
+
+[slides]: https://maelvls.dev/hack-your-controller-in-bash/ "Slides of the presentation 'Hack your Kubernetes controller in Bash in 10 minutes!'"
+[backup]: https://slides.com/maelvls/hack-your-kubernetes-controller-in-10-minutes "Slides of the presentation 'Hack your Kubernetes controller in Bash in 10 minutes!'"
 
 On 30 June 2022, Antoine Le Squéren and Maël Valais presented "Hack your
 Kubernetes controller in Bash in 10 minutes!" at Kubernetetes Community
