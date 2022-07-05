@@ -4,6 +4,8 @@
 | ----------------------------- |
 
 
+![Screenshot from 2022-07-05 11-22-50](https://user-images.githubusercontent.com/2195781/177296057-299539d2-8de6-444f-bf58-3f1cc59fad0a.png)
+
 [slides]: https://maelvls.dev/hack-your-controller-in-bash/ "Slides of the presentation 'Hack your Kubernetes controller in Bash in 10 minutes!'"
 [backup]: https://slides.com/maelvls/hack-your-kubernetes-controller-in-10-minutes "Slides of the presentation 'Hack your Kubernetes controller in Bash in 10 minutes!'"
 
@@ -17,6 +19,8 @@ controller" we talked about in the presentation.
 In the presentation, we show a controller that takes for form of a
 "one-liner" that you can copy-paste in your terminal.
 
+
+
 ```sh
 kubectl get externalsecret --watch -ojson \
   | jq 'select(.status.conditions[]?.reason == "SecretSyncedError")' --unbuffered \
@@ -25,6 +29,8 @@ kubectl get externalsecret --watch -ojson \
     vault kv put $key $property=somerandomvalue
   done
 ```
+
+![Screenshot from 2022-07-05 11-23-09](https://user-images.githubusercontent.com/2195781/177296067-05cc0a96-6be3-454e-aecb-2a36ca3286d1.png)
 
 The file `controller.sh` contains the above command.
 
