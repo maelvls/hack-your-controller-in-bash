@@ -1,8 +1,11 @@
 # Hack your Kubernetes controller in Bash in 10 minutes!
 
-| [🎓️ Slides][slides] ([backup][backup]) |
+| [🔴 YouTube Recording][kcd-berlin-2022], [🎓️ Slides][slides] ([backup][backup]) |
 | ----------------------------- |
 
+[![Hack your own Kuberntes Controller in less than 10 min in Bash - M. Valais & A. Le Squéren, OneStock](http://img.youtube.com/vi/Nwz66AT3AGY/0.jpg)][kcd-berlin-2022]
+
+[kcd-berlin-2022]: https://www.youtube.com/watch?v=Nwz66AT3AGY&t=632s "Hack your own Kuberntes Controller in less than 10 min in Bash - M. Valais & A. Le Squéren, OneStock"
 
 ![Screenshot from 2022-07-05 11-22-50](https://user-images.githubusercontent.com/2195781/177296057-299539d2-8de6-444f-bf58-3f1cc59fad0a.png)
 
